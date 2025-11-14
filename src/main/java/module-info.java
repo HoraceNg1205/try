@@ -8,4 +8,5 @@ module library {
 
     opens library.controllers;
     exports library.controllers;
+    opens library.models;
 }
