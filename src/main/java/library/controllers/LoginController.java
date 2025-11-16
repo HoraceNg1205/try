@@ -10,9 +10,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import library.Main;
-
+import library.SessionManager;
+import library.models.User;
+import library.repositories.UserRepository;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 public class LoginController {
     @FXML private Label        headerLabel;
@@ -20,6 +23,7 @@ public class LoginController {
     @FXML private PasswordField passwordField;
 
     private String selectedRole;
+    private UserRepository userRepo = new UserRepository();         // New: Create repository instance
 
     public void setRole(String role) {
         this.selectedRole = role;
@@ -40,19 +44,72 @@ public class LoginController {
 
     @FXML
     private void handleLogin(ActionEvent event) {
-        String fxml;
-        switch (selectedRole.toLowerCase()) {
-            case "student":   fxml = "/fxml/StudentDashboard.fxml";   break;
-            case "author":    fxml = "/fxml/AuthorDashboard.fxml";    break;
-            case "librarian": fxml = "/fxml/LibrarianDashboard.fxml"; break;
-            default:          fxml = "/fxml/Home.fxml";               break;
+        String username = usernameField.getText();
+        String password = passwordField.getText();
+
+        if (username.isEmpty() || password.isEmpty()) {
+            showAlert("Login Failed", "Username and password cannot be empty.");
+            return;
         }
+
         try {
-            Parent dash = FXMLLoader.load(getClass().getResource(fxml));
+            Optional<User> authResult = userRepo.authenticate(username, password);
+
+            if (authResult.isEmpty()) {
+                // Use case A2: Unknown username or password
+                showAlert("Login Failed", "Unknown username or password!");
+                return;
+            }
+
+            User user = authResult.get();
+            String userRole = user.getClass().getSimpleName().toLowerCase(); // "student", "author", etc.
+
+            // Use case A3: Wrong login user type selected
+            if (!isRoleMatch(userRole, selectedRole)) {
+                showAlert("Login Failed", "You are not a " + selectedRole + "! Please log in in the correct screen.");
+                return;
+            }
+
+            // --- Login Success ---
+
+            SessionManager.getInstance().setLoggedInUser(user);
+
+            String fxml;
+            switch (userRole) {
+                case "student":   fxml = "/fxml/StudentDashboard.fxml";   break;
+                case "author":    fxml = "/fxml/AuthorDashboard.fxml";    break;
+                case "librarian": fxml = "/fxml/LibrarianDashboard.fxml"; break;
+                default:          fxml = "/fxml/Home.fxml";               break;
+            }
+
+            Parent dash = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(fxml)));
             Main.getPrimaryStage().setScene(new Scene(dash, 1000, 700));
+
         } catch (IOException e) {
             e.printStackTrace();
+            showAlert("Error", "An error occurred while trying to log in.");
         }
+    }
+
+    /**
+     * Helper to check if the authenticated user's role matches the login screen role.
+     */
+    private boolean isRoleMatch(String userRole, String loginRole) {
+        if (loginRole.toLowerCase().equals("student") || loginRole.toLowerCase().equals("staff")) {
+            return userRole.equals("student"); // Assumes "staff" is saved as "student"
+        }
+        return userRole.equals(loginRole.toLowerCase());
+    }
+
+    /**
+     * NEW: Helper method to show alerts
+     */
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     /** New: navigate to the standalone Register screen */

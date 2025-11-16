@@ -166,4 +166,33 @@ public class UserRepository {
 
         return found;
     }
+
+    /**
+     * Update user full name
+     */
+    public boolean updateUserFullName(String username, String newFullName) throws IOException {
+        File file = new File(JSON_FILE_PATH);
+        if (!file.exists()) {
+            return false;
+        }
+
+        JsonNode rootNode = objectMapper.readTree(file);
+        ArrayNode usersArray = (ArrayNode) rootNode.get("users");
+
+        boolean found = false;
+        for (int i = 0; i < usersArray.size(); i++) {
+            JsonNode userNode = usersArray.get(i);
+            if (userNode.get("username").asText().equals(username)) {
+                ((ObjectNode) userNode).put("fullName", newFullName);
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, rootNode);
+        }
+
+        return found;
+    }
 }
