@@ -3,10 +3,16 @@ module library {
     requires javafx.fxml;
     requires java.desktop;
 
+    requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.core;
+    requires com.fasterxml.jackson.annotation;
+
     opens library;
     exports library;
 
     opens library.controllers;
     exports library.controllers;
+
     opens library.models;
+    exports library.models;
 }

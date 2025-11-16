@@ -1,47 +1,42 @@
 package library.models;
 
+import java.util.ArrayList;
+
 /**
  * Model class representing a Book.
  * Contains logic for managing the book's publication status.
  */
 public class Book {
-
-    // Using an enum for status is safer than strings
-    public enum Status {
-        PENDING,
-        APPROVED,
-        REJECTED
-    }
-
+    private int bookId;
     private String title;
-    private Status status;
+    private String abstractText;
+    private String publishDate;
+    private String status; // Available, Borrowed, Reserved, Pending, Approved
+    private Author author;
+    private ArrayList<BorrowRecord> borrowRecords;
 
-    public Book(String title) {
+    public Book(int bookId, String title, String abstractText, String publishDate, String status) {
+        this.bookId = bookId;
         this.title = title;
-        this.status = Status.PENDING; // New books are pending by default
+        this.abstractText = abstractText;
+        this.publishDate = publishDate;
+        this.status = status;
+        this.borrowRecords = new ArrayList<>();
     }
 
-    /**
-     * Approves the book for publication.
-     */
-    public void approve() {
-        this.status = Status.APPROVED;
+    public void setAuthor(Author author) {
+        this.author = author;
     }
 
-    /**
-     * Rejects the book.
-     */
-    public void reject() {
-        this.status = Status.REJECTED;
+    @Override
+    public String toString() {
+        return "Book: " + title + " (" + status + ")";
     }
-
-    // --- Getters ---
-
     public String getTitle() {
         return title;
     }
 
-    public Status getStatus() {
-        return status;
+    public void addBorrowRecord(BorrowRecord borrowRecord) {
+        this.borrowRecords.add(borrowRecord);
     }
 }

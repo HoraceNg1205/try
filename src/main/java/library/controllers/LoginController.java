@@ -65,8 +65,6 @@ public class LoginController {
         Main.getPrimaryStage().setScene(new Scene(root, 640, 480));
     }
 
-
-
     private String capitalize(String s) {
         return s.substring(0,1).toUpperCase() + s.substring(1);
     }

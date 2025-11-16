@@ -18,6 +18,31 @@
 
             <!-- 1) Pending Approvals -->
             <Tab text="Pending Approvals">
+                <BorderPane>
+                    <!-- Table of pending books -->
+                    <center>
+                        <TableView fx:id="pendingBooksTable" prefHeight="400" prefWidth="850">
+                            <columns>
+                                <TableColumn fx:id="titleColumn" text="Title" prefWidth="200"/>
+                                <TableColumn fx:id="authorColumn" text="Author" prefWidth="150"/>
+                                <TableColumn fx:id="abstractColumn" text="Abstract" prefWidth="400"/>
+                                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="100"/>
+                            </columns>
+                        </TableView>
+                    </center>
+
+                    <!-- Action buttons -->
+                    <bottom>
+                        <HBox alignment="CENTER" spacing="20">
+                            <padding>
+                                <Insets top="10" bottom="10" left="10" right="10"/>
+                            </padding>
+                            <Button fx:id="viewButton" text="View" onAction="#handleViewBook" prefWidth="120"/>
+                            <Button fx:id="approveButton" text="Approve" onAction="#handleApproveBook" prefWidth="120"/>
+                            <Button fx:id="rejectButton" text="Reject" onAction="#handleRejectBook" prefWidth="120"/>
+                        </HBox>
+                    </bottom>
+                </BorderPane>
             </Tab>
 
             <!-- 2) Manage Users -->
@@ -48,3 +73,4 @@
         </HBox>
     </bottom>
 </BorderPane>
+

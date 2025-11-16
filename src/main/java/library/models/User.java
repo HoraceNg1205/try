@@ -4,37 +4,27 @@ package library.models;
  * Model class representing a User.
  * Contains logic for managing the user's account status.
  */
-public class User {
+public abstract class User {
+    protected int userId;
+    protected String username;
+    protected String password;
+    protected String fullName;
 
-    private String username;
-    private boolean isActive;
-
-    public User(String username) {
+    public User(int userId, String username, String password, String fullName) {
+        this.userId = userId;
         this.username = username;
-        this.isActive = true; // Users are active by default
+        this.password = password;
+        this.fullName = fullName;
     }
 
-    /**
-     * Deactivates the user's account.
-     */
-    public void deactivate() {
-        this.isActive = false;
-    }
+    public String getUsername() { return username; }
+    public String getPassword() { return password; }
+    public int getUserId() { return userId; }
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
-    /**
-     * Activates the user's account.
-     */
-    public void activate() {
-        this.isActive = true;
-    }
-
-    // --- Getters ---
-
-    public String getUsername() {
-        return username;
-    }
-
-    public boolean isActive() {
-        return isActive;
+    @Override
+    public String toString() {
+        return "User: " + username;
     }
 }
